@@ -72,7 +72,7 @@ console.log(nota1);
 
 // Ejemplo 2: Crear nota con título personalizado
 console.log('\n=== CREAR NOTA CON TÍTULO ===');
-const nota2 = createNote('Contenido de la segunda nota', 'Nota Importante');
+const nota2 = createNote('El árbol es grande', '¿De qué tamaño es el árbol?');
 console.log(nota2);
 
 // Ejemplo 3: Intentar crear nota vacía (validación)
