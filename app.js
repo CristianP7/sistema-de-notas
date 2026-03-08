@@ -1,4 +1,4 @@
-// SISTEMA DE NOTAS MARKDOWN
+// SISTEMA DE NOTAS MARKDOWN.
 
 function generateId() {
   const timestamp = Date.now();
