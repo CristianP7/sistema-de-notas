@@ -36,5 +36,5 @@ const nota1 = createNote('Hola Mundo', 'Cristian Pereira');
 console.log(nota1);
 
 const nota2 = createNote('');
-console.log(nota2); // dará error
+console.log(nota2); // dará error ya que tiene campos vacios
 
