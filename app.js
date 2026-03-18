@@ -32,7 +32,9 @@ function createNote(content, title) {
 
 // Ejemplo 1: Crear una nota
 
-console.log('=== CREAR NOTA ===');
-const nota1 = createNote('# Mi primera nota\nEste es el contenido de mi primera nota en Markdown.');
+const nota1 = createNote('Hola Mundo', 'Cristian Pereira');
 console.log(nota1);
+
+const nota2 = createNote('');
+console.log(nota2); // dará error
 
