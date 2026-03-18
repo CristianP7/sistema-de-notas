@@ -66,16 +66,19 @@ function listNotes() {
 }
 
 // Ejemplo 1: Crear una nota
+
 console.log('=== CREAR NOTA ===');
 const nota1 = createNote('# Mi primera nota\nEste es el contenido de mi primera nota en Markdown.');
 console.log(nota1);
 
 // Ejemplo 2: Crear nota con título personalizado
+
 console.log('\n=== CREAR NOTA CON TÍTULO ===');
 const nota2 = createNote('El árbol es grande', '¿De qué tamaño es el árbol?');
 console.log(nota2);
 
 // Ejemplo 3: Intentar crear nota vacía (validación)
+
 console.log('\n=== VALIDACIÓN: NOTA VACÍA ===');
 const notaVacia = createNote('   ');
 console.log(notaVacia);
