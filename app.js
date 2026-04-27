@@ -316,7 +316,7 @@ function saveToStorage(notes) {
 function loadFromStorage() {
   const notesJSON = localStorage.getItem(STORAGE_KEY);
 
-  iF (notesJSON === null || notesJSON === undefined) {
+  if (notesJSON === null || notesJSON === undefined) {
     return [];
   }
 
