@@ -1,4 +1,4 @@
-// ============================================
+// ============================================ 
 // SISTEMA DE NOTAS MARKDOWN
 // ============================================
 
@@ -87,9 +87,7 @@ function generateId() {
   return timestamp;
 }
 
-// --------------------------------------------
-// FUNCIONES CRUD DE NOTAS
-// --------------------------------------------
+// Crear nota
 
 /**
  * Crea un objeto de nota con el contenido proporcionado
