@@ -1,6 +1,10 @@
 // ============================================
+// ============================================
 // SISTEMA DE NOTAS MARKDOWN
 // ============================================
+
+const STORAGE_KEY = 'markdown-notes';
+let currentNoteId = null;
 
 const STORAGE_KEY = 'markdown-notes';
 let currentNoteId = null;
@@ -17,20 +21,26 @@ let currentNoteId = null;
 function deriveTitle(content) {
   if (content === '' || content === null || content === undefined) {
     return 'Sin título';
+  if (content === '' || content === null || content === undefined) {
+    return 'Sin título';
   }
 
   const cleanContent = content.trim();
 
   if (cleanContent === '') {
     return 'Sin título';
+  if (cleanContent === '') {
+    return 'Sin título';
   }
 
+  let firstLine = '';
   let firstLine = '';
   let foundNewLine = false;
 
   for (let i = 0; i < cleanContent.length; i = i + 1) {
     const char = cleanContent[i];
 
+    if (char === '\n') {
     if (char === '\n') {
       foundNewLine = true;
       break;
@@ -41,9 +51,12 @@ function deriveTitle(content) {
 
   if (firstLine.trim() === '') {
     return 'Sin título';
+  if (firstLine.trim() === '') {
+    return 'Sin título';
   }
 
   if (firstLine.length > 50) {
+    firstLine = firstLine.slice(0, 50) + '...';
     firstLine = firstLine.slice(0, 50) + '...';
   }
 
@@ -59,6 +72,8 @@ function deriveTitle(content) {
 function deriveExcerpt(content, maxLen) {
   if (content === '' || content === null || content === undefined) {
     return '';
+  if (content === '' || content === null || content === undefined) {
+    return '';
   }
 
   let maxLength = maxLen;
@@ -72,6 +87,7 @@ function deriveExcerpt(content, maxLen) {
     return cleanContent;
   }
 
+  const excerpt = cleanContent.slice(0, maxLength) + '...';
   const excerpt = cleanContent.slice(0, maxLength) + '...';
 
   return excerpt;
@@ -93,6 +109,9 @@ function generateId() {
 // --------------------------------------------
 // FUNCIONES CRUD DE NOTAS
 // --------------------------------------------
+// --------------------------------------------
+// FUNCIONES CRUD DE NOTAS
+// --------------------------------------------
 
 /**
  * Crea un objeto de nota con el contenido proporcionado
@@ -104,6 +123,7 @@ function createNote(content, title) {
   const trimmedContent = content.trim();
 
   if (trimmedContent === '') {
+  if (trimmedContent === '') {
     return null;
   }
 
@@ -112,6 +132,7 @@ function createNote(content, title) {
   const currentTime = Date.now();
 
   let noteTitle = title;
+  if (noteTitle === undefined || noteTitle === null || noteTitle === '') {
   if (noteTitle === undefined || noteTitle === null || noteTitle === '') {
     noteTitle = deriveTitle(content);
   }
@@ -147,7 +168,30 @@ function saveToStorage(notes) {
 /**
  * Carga las notas desde localStorage
  * @returns {Array} Array de notas o array vacío si no hay datos
+/**
+ * Garda las notas en LocalStorage
+ * @param {Array} notes - Array de notas a guardar
  */
+function saveToStorage(notes) {
+  if (notes === undefined || notes === null) {
+    console.error('No se pueden guardar notas: Datos inválidos');
+    return;
+  }
+  const notesJSON = JSON.stringify(notes);
+  localStorage.setItem(STORAGE_KEY, notesJSON);
+}
+
+/**
+ * Carga las notas desde localStorage
+ * @returns {Array} Array de notas o array vacío si no hay datos
+ */
+function loadFromStorage() {
+  const notesJSON = localStorage.getItem(STORAGE_KEY);
+
+  if (notesJSON === null || notesJSON === undefined) {
+    return [];
+  }
+
 function loadFromStorage() {
   const notesJSON = localStorage.getItem(STORAGE_KEY);
 
@@ -181,20 +225,28 @@ function createPersistentNotesStore() {
   function addNote(content, title) {
     if (content === undefined || content === null || content.trim() === '') {
       return { success: false, message: 'El contenido no puede estar vacío' };
+    if (content === undefined || content === null || content.trim() === '') {
+      return { success: false, message: 'El contenido no puede estar vacío' };
     }
 
     const newNote = createNote(content, title);
 
     if (newNote === null) {
       return { success: false, message: 'Error al crear la nota' };
+      return { success: false, message: 'Error al crear la nota' };
     }
 
     notes.push(newNote);
+    saveToStorage(notes);
     saveToStorage(notes);
 
     return { success: true, note: newNote };
   }
 
+  /**
+   * Obtiene todas las notas
+   * @returns {Array} Copia del array de notas
+   */
   /**
    * Obtiene todas las notas
    * @returns {Array} Copia del array de notas
@@ -207,6 +259,11 @@ function createPersistentNotesStore() {
     return notesCopy;
   }
 
+  /**
+   * Obtiene una nota por su ID
+   * @param {number} noteId - ID de la nota a buscar
+   * @returns {Object|null} Nota encontrada o null si no existe
+   */
   /**
    * Obtiene una nota por su ID
    * @param {number} noteId - ID de la nota a buscar
@@ -233,8 +290,18 @@ function createPersistentNotesStore() {
    * @param {boolean} [updates.favorite] - Estado de favorito
    * @returns {Object} Resultado de la operación
    */
+  /**
+   * Actualiza una nota existente
+   * @param {number} noteId - ID de la nota a actualizar
+   * @param {Object} updates - Campos a actualizar
+   * @param {string} [updates.content] - Nuevo contenido
+   * @param {string} [updates.title] - Nuevo título
+   * @param {boolean} [updates.favorite] - Estado de favorito
+   * @returns {Object} Resultado de la operación
+   */
   function updateNote(noteId, updates) {
     if (noteId === undefined || noteId === null) {
+      return { success: false, message: 'ID inválido' };
       return { success: false, message: 'ID inválido' };
     }
 
@@ -244,11 +311,14 @@ function createPersistentNotesStore() {
 
     if (noteToUpdate === undefined) {
       return { success: false, message: 'Nota no encontrada' };
+      return { success: false, message: 'Nota no encontrada' };
     }
 
     if (updates.content !== undefined) {
       const trimmedContent = updates.content.trim();
 
+      if (trimmedContent === '') {
+        return { success: false, message: 'El contenido no puede estar vacío' };
       if (trimmedContent === '') {
         return { success: false, message: 'El contenido no puede estar vacío' };
       }
@@ -259,6 +329,7 @@ function createPersistentNotesStore() {
     }
 
     if (updates.title !== undefined && updates.title !== '') {
+    if (updates.title !== undefined && updates.title !== '') {
       noteToUpdate.title = updates.title;
     }
 
@@ -267,6 +338,7 @@ function createPersistentNotesStore() {
     }
 
     noteToUpdate.updatedAt = Date.now();
+    saveToStorage(notes);
     saveToStorage(notes);
 
     return { success: true, note: { ...noteToUpdate } };
@@ -277,8 +349,14 @@ function createPersistentNotesStore() {
    * @param {number} noteId - ID de la nota a eliminar
    * @returns {Object} Resultado de la operación
    */
+  /**
+   * Elimina una nota por su ID
+   * @param {number} noteId - ID de la nota a eliminar
+   * @returns {Object} Resultado de la operación
+   */
   function deleteNote(noteId) {
     if (noteId === undefined || noteId === null) {
+      return { success: false, message: 'ID inválido' };
       return { success: false, message: 'ID inválido' };
     }
 
@@ -290,8 +368,12 @@ function createPersistentNotesStore() {
 
     if (notes.length === initialLength) {
       return { success: false, message: 'Nota no encontrada' };
+      return { success: false, message: 'Nota no encontrada' };
     }
 
+    saveToStorage(notes);
+
+    return { success: true, message: 'Nota eliminada exitosamente' };
     saveToStorage(notes);
 
     return { success: true, message: 'Nota eliminada exitosamente' };
@@ -302,7 +384,13 @@ function createPersistentNotesStore() {
    * @param {string} query - Texto a buscar
    * @returns {Array} Notas que coinciden con la búsqueda
    */
+  /**
+   * Busca notas por texto en título o contenido
+   * @param {string} query - Texto a buscar
+   * @returns {Array} Notas que coinciden con la búsqueda
+   */
   function searchNotes(query) {
+    if (query === undefined || query === null || query.trim() === '') {
     if (query === undefined || query === null || query.trim() === '') {
       return [];
     }
@@ -328,6 +416,10 @@ function createPersistentNotesStore() {
    * Obtiene las notas ordenadas por fecha de actualización
    * @returns {Array} Notas ordenadas de más reciente a más antigua
    */
+  /**
+   * Obtiene las notas ordenadas por fecha de actualización
+   * @returns {Array} Notas ordenadas de más reciente a más antigua
+   */
   function getNotesOrderedByDate() {
     const notesCopy = notes.map(function (note) {
       return { ...note };
@@ -344,6 +436,10 @@ function createPersistentNotesStore() {
    * Obtiene las notas marcadas como favoritas
    * @returns {Array} Notas favoritas
    */
+  /**
+   * Obtiene las notas marcadas como favoritas
+   * @returns {Array} Notas favoritas
+   */
   function getFavoriteNotes() {
     const favorites = notes.filter(function (note) {
       return note.favorite === true;
@@ -354,6 +450,10 @@ function createPersistentNotesStore() {
     });
   }
 
+  /**
+   * Obtiene el número total de notas
+   * @returns {number} Cantidad de notas
+   */
   /**
    * Obtiene el número total de notas
    * @returns {number} Cantidad de notas
